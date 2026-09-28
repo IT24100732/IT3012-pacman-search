@@ -180,6 +180,49 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
 
+def uniformCostSearch(problem: SearchProblem):
+    """Search the node of least total cost first."""
+
+    # Priority queue for UCS
+    fringe = util.PriorityQueue()
+
+    # Starting state
+    start_state = problem.getStartState()
+
+    # Store: (state, path, cost)
+    # Priority = total path cost
+    fringe.push((start_state, [], 0), 0)
+
+    # Keep track of the cheapest cost at which we have expanded a state
+    visited = {}
+
+    while not fringe.isEmpty():
+
+        # Get the node with the lowest cost
+        state, path, cost = fringe.pop()
+
+        # If this is the goal, return the path
+        if problem.isGoalState(state):
+            return path
+
+        # Expand only if this is the cheapest path to this state
+        if state not in visited or cost < visited[state]:
+            visited[state] = cost
+
+            # Add successors
+            for successor, action, stepCost in problem.getSuccessors(state):
+
+                new_cost = cost + stepCost
+
+                if successor not in visited or new_cost < visited[successor]:
+                    fringe.push(
+                        (successor, path + [action], new_cost),
+                        new_cost
+                    )
+
+    # No solution
+    return []
+
 
 # Abbreviations
 bfs = breadthFirstSearch
