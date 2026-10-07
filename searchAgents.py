@@ -472,22 +472,40 @@ class CornersProblem(search.SearchProblem):
 # ===================================================
 
 
+# Q6: Corners Heuristic
+
 def cornersHeuristic(state: Any, problem: CornersProblem):
-    """
-    A heuristic for the CornersProblem that you defined.
+    currentPosition, visitedCorners = state
 
-    This function should always return a number that is a lower bound on the
-    shortest path from the state to a goal of the problem; i.e. it should be
-    admissible (as well as consistent).
-    """
+    unvisitedCorners = [
+        corner
+        for corner in problem.corners
+        if corner not in visitedCorners
+    ]
 
-    corners = problem.corners
-    walls = problem.walls
+    if len(unvisitedCorners) == 0:
+        return 0
 
-    "*** YOUR CODE HERE ***"
+    heuristicCost = 0
+    current = currentPosition
 
-    return 0
+    while unvisitedCorners:
+        distances = [
+            (
+                abs(current[0] - corner[0])
+                + abs(current[1] - corner[1]),
+                corner,
+            )
+            for corner in unvisitedCorners
+        ]
 
+        distance, nearestCorner = min(distances)
+
+        heuristicCost += distance
+        current = nearestCorner
+        unvisitedCorners.remove(nearestCorner)
+
+    return heuristicCost
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for the CornersProblem using A*."
